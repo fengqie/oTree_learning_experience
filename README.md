@@ -132,5 +132,5 @@ In this section, I will tell you some code which may save you time to find.
 5. If you've gotten this far in deploying the experiment, please refer to **Document_Server setup_Windows Server (advanced)**. If you still have problems, ask the ChatGPT. 
 ## S4 My Case
 
-Ask me for the program.
+Please refer to the file.
 
