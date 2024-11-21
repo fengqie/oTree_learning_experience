@@ -1,0 +1,230 @@
+{{ load static }}
+{{ block title }}
+Time Allocation_Round 2
+{{ endblock }}
+
+{{ block content }}
+<head>
+    <link rel="stylesheet" href=" {{static 'bootstrap-4.5.3-dist/css/bootstrap.min.css'}} ">
+    <link rel="stylesheet" href="{{static 'bootstrap-4.5.3-dist/font/bootstrap-icons.css'}}">
+    <style>
+        .otree-timer {
+            display: none;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .row {
+            flex-grow: 0;
+        }
+
+        .bi-x-circle {
+            color: red;
+        }
+
+        .bi-check-circle {
+            color: darkgreen;
+        }
+
+        .table-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: auto;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row" style="height: 40px;">
+        <div class="col-sm-8">
+            <!-- introduce text -->
+            <p>
+                The team receives points at the completion of the project <span class="text-danger">120</span>，
+                otherwise <span class="text-danger">108*project progress</span>；
+                your id is：<span class="text-danger" id="playerself">{{playerself}}</span>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <!-- timeout -->
+            <p>
+                countdown：<span id="time-left" class="text-success"></span> s
+            </p>
+        </div>
+    </div>
+    <div class="row" style="height: 40px;">
+        <div class="col-sm-8">
+            <!-- introduce text -->
+            <p>
+                The conversion rate per time invested is：<span class="text-danger">7/8/9</span>（stochastic）
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <!-- left endowment -->
+            <p>
+                surplus endowment：<span id="left_endowment" class="text-success">24</span> hour
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <!-- sheet -->
+            <div class="table-container" style="overflow-y: scroll; max-height: 600px;">
+                <div style="width:120%;">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>serial number</th>
+                            <th>Number of participants</th>
+                            <th>Completed or not</th>
+                            <th>invested（hour）</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ for item in task_id }}
+                        <tr>
+                            <td id="{{ item }}-task_id">{{ item }}</td>
+                            <td>
+                                <span class="text-danger" id="{{ item }}-member">0</span> <i
+                                    class="bi bi-person-check-fill"></i>
+                            </td>
+                            <td>
+                                <i class="bi bi-x-circle" id="{{ item }}-complete"></i>
+                            </td>
+                            <td id="{{ item }}-investment">0</td>
+                        </tr>
+                        {{ endfor }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <!-- operating function -->
+            <div>
+                <form style="margin-top: 100px;">
+                    <div class="form-group">
+                        <label for="task_choice">Select Project</label>
+                        <select id="task_choice" class="form-control">
+                            {{ for item in task_id }}
+                            <option value="{{item}}">{{item}}</option>
+                            {{ endfor }}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="invest">distributive endowment</label>
+                        <select id="invest" class="form-control">
+                            {{ for item in endow }}
+                            <option value="{{item}}">{{item}}</option>
+                            {{ endfor }}
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="sendData()">invest</button>
+                </form>
+            </div>
+            <br>
+            <div class="next-button">{{ next_button }}</div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let customTimerEle = document.getElementById('time-left');
+    document.addEventListener("DOMContentLoaded", function (event) {
+        $('.otree-timer__time-left').on('update.countdown', function (event) {
+            customTimerEle.innerText = event.offset.totalSeconds;
+        });
+    });
+
+    var nextButton = document.querySelector('.next-button');
+    nextButton.style.display = 'none';
+</script> <!-- timeout style,cover next-button in general circumstance-->
+
+<script src="{{ static 'bootstrap-4.5.3-dist/js/bootstrap.min.js' }}"></script>
+
+<script>
+    function sendData() {
+        // 获取倒计时时间
+        let countdownValue = parseInt(document.getElementById('time-left').innerText);
+
+        // 获取任务选择\投资数\当前剩余禀赋
+        let task_choiceValue = parseInt(document.getElementById('task_choice').value);
+        let investmentValue = parseInt(document.getElementById('invest').value);
+        let endowmentValue = parseInt(document.getElementById('left_endowment').innerText);
+
+        if (investmentValue <= endowmentValue) {
+            // 若剩余禀赋足够，live_method提交数据到后端
+            liveSend({
+                'countdown': countdownValue,
+                'task_choice': task_choiceValue,
+                'investment': investmentValue,
+                'endowment': endowmentValue
+            });
+        } else {
+            // 禀赋不足报错
+            alert('Your remaining endowment is insufficient!');
+        }
+    }
+
+    function liveRecv(data) {
+        console.log(data)
+        // 报错：小组人数已满
+        if (data.errormsg) {
+            alert('The project you have selected is full!');
+        } else {
+            // 更新任务人数
+            let memberElement = document.getElementById(data.task_choice + '-member');
+            memberElement.innerText = data.membercheck
+
+            // 更新任务完成情况
+            let completeElement = document.getElementById(data.task_choice + '-complete');
+            if (data.achieve) {
+                completeElement.className = 'bi bi-check-circle';
+            }
+
+            // 获取当前被试的id，并判断传输的数据是否是对他个人
+            let playerselfValue = parseInt(document.getElementById('playerself').innerText);
+            if (data.my_id === playerselfValue) {
+                // 更新剩余禀赋，并判断是否显示nextButton
+                let leftEndowmentElement = document.getElementById('left_endowment');
+                leftEndowmentElement.innerText = data.left_endowment;
+                // 据条件显示下一页按钮
+                if (parseInt(leftEndowmentElement.innerText) === 0) {
+                    nextButton.style.display = "block";
+                }
+
+                // 更新已投资数
+                let investmentElement = document.getElementById(data.task_choice + '-investment');
+                investmentElement.innerText = data.investmented;
+
+                // 清空输入框的内容
+                document.getElementById('task_choice').value = ''; // 清空任务选择框
+                document.getElementById('invest').value = ''; // 清空投资数量框
+            }
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        liveSend({})
+    });
+</script> <!-- submit function / update left-endowment、investmented、alert error、display next-button -->
+</body>
+
+{{ endblock }}
+
+

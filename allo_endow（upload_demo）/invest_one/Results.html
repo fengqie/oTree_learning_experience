@@ -1,0 +1,20 @@
+{{ block title }}
+Please check your earnings for this round
+{{ endblock }}
+
+{{ block content }}
+<br>
+<p>
+    Your points for this round are：<span class="text-danger">{{first_score}} </span>,
+    Converted to earnings：<span class="text-danger">{{score_trans}} </span>CNY,
+    The gain on the exchange of the remaining endowment is：<span class="text-danger">{{endow_trans}} </span>CNY,
+    The gain for this round is<span class="text-danger">{{first_income}} </span>CNY。
+</p>
+<br>
+{{ next_button }}
+{{ endblock }}
+
+
+
+
+
