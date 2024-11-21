@@ -24,7 +24,7 @@ First, **get enough knowledge of experimental theory**. Before programming your 
 
 Second, **get enough knowledge about Python**. As I have just introduced, the oTree is based on Python, not to mention its grammar. I have passed the National Computer Rank Examination and achieved level 2. It may be a conference point for you to assess your position.
 
-Third, given the complexity of your experiment (like a multiplayer game, just as the case in this post’s end), you also need knowledge about 1)**web design**; 2)**simple database operation**( like SQL series); 3) **Front-end and back-end interactions**（前后端交互）. Next section I will introduce you to some videos for a quick start.
+Third, given the complexity of your experiment (like a multiplayer game, just as the case in this post’s end), you also need knowledge about 1)**web design**; 2)**simple database operation**( like SQL series); 3) **Front-end and back-end interactions**. Next section I will introduce you to some videos for a quick start.
 
 ### s2.2 Materials
 
@@ -100,7 +100,7 @@ Browse the **document page** of oTree,  and take a brief look at what oTree can 
 >
 > Don't be afraid to make mistakes, there are a lot of opportunities to try. 
 >
-> When encountering impossible problems (I mean you cannot get a solution from Chat or forum), you can go for Dr Zhufeng(朱峰老师为人热情，我曾与他讨论过实验开发方案，收益颇丰。) 
+> 
 
 
 
@@ -129,8 +129,7 @@ In this section, I will tell you some code which may save you time to find.
    otree prodserver 端口号(e.g. 8000, 80, 70 etc.)
    ```
 
-5. If you've gotten this far in deploying the experiment, please refer to **Document_Server setup_Windows Server (advanced)**. If you still have problems, ask the ChatGPT. Finally, ask me or Dr Zhufeng.
-
+5. If you've gotten this far in deploying the experiment, please refer to **Document_Server setup_Windows Server (advanced)**. If you still have problems, ask the ChatGPT. 
 ## S4 My Case
 
 Ask me for the program.
